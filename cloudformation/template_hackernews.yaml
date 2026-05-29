@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Bronze layer - Hacker News collector'
+
+Parameters:
+  RandomNumber:
+    Type: String
+    Default: 777777
+    Description: Random broj za bucket
+
+Resources:
+  BronzeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "hn-bronze-${AWS::AccountId}-${RandomNumber}"
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: S3Write
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: s3:PutObject
+                Resource: !Sub "${BronzeBucket.Arn}/*"
+
+  HackerNewsCollector:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: hn-collector
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 300
+      MemorySize: 256
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref BronzeBucket
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import urllib.request
+          from datetime import datetime, timedelta
+          import os
+          
+          s3 = boto3.client('s3')
+          BUCKET = os.environ['BUCKET_NAME']
+          
+          def lambda_handler(event, context):
+              yesterday = datetime.utcnow() - timedelta(days=1)
+              start = int(yesterday.replace(hour=0, minute=0, second=0).timestamp())
+              end = int(yesterday.replace(hour=23, minute=59, second=59).timestamp())
+              
+              url = "https://hacker-news.firebaseio.com/v0/topstories.json"
+              with urllib.request.urlopen(url) as resp:
+                  ids = json.loads(resp.read())[:100]
+              
+              collected = []
+              for i in ids:
+                  item_url = f"https://hacker-news.firebaseio.com/v0/item/{i}.json"
+                  try:
+                      with urllib.request.urlopen(item_url) as r:
+                          item = json.loads(r.read())
+                          if item and start <= item.get('time', 0) <= end:
+                              collected.append(item)
+                  except:
+                      pass
+              
+              path = yesterday.strftime('bronze/hackernews/year=%Y/month=%m/day=%d/hn_%Y%m%d.json')
+              s3.put_object(Bucket=BUCKET, Key=path, Body=json.dumps(collected))
+              
+              return {'statusCode': 200, 'body': f'OK, saved {len(collected)} items'}
+
+  DailyTrigger:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: "cron(0 2 * * ? *)"
+      Targets:
+        - Arn: !GetAtt HackerNewsCollector.Arn
+          Id: Target
+
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref HackerNewsCollector
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt DailyTrigger.Arn
+
+Outputs:
+  BucketName:
+    Value: !Ref BronzeBucket
