@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Storage stack - imports existing S3 bucket'
+
+Resources:
+  ExistingBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: hn-bronze-300617413048-12345678
+
+Outputs:
+  BucketName:
+    Value: !Ref ExistingBucket
+    Export:
+      Name: !Sub "${AWS::StackName}-BucketName"
