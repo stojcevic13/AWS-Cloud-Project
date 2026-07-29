@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": "{\"count\": 8, \"date\": \"2026-05-30\", \"location\": \"bronze/twitter/year=2026/month=05/day=30/tweets_20260530.json\"}"}

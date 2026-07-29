@@ -1,0 +1,127 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Twitter generator stack - Lambda + EventBridge'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Ime bucket-a (prosledi ga prilikom deploy-a)
+
+Resources:
+  TwitterLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: S3Write
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: s3:PutObject
+                Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+
+  TwitterGenerator:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: twitter-generator-v2
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      Role: !GetAtt TwitterLambdaRole.Arn
+      Timeout: 60
+      MemorySize: 128
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref BucketName
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import random
+          from datetime import datetime, timedelta
+          import os
+
+          s3 = boto3.client('s3')
+          BUCKET = os.environ['BUCKET_NAME']
+
+          USERS = [
+              {"user": "cloud_engineer", "followers": 1250, "verified": False},
+              {"user": "crypto_trader", "followers": 5800, "verified": True},
+              {"user": "data_scientist", "followers": 3400, "verified": False},
+              {"user": "tech_blogger", "followers": 2100, "verified": True},
+              {"user": "dev_journey", "followers": 890, "verified": False},
+              {"user": "aws_expert", "followers": 4500, "verified": True},
+              {"user": "python_lover", "followers": 1200, "verified": False},
+              {"user": "security_analyst", "followers": 3100, "verified": True}
+          ]
+
+          TEXTS = [
+              "Just deployed my first serverless app on AWS! #cloud",
+              "Learning about Medallion architecture today",
+              "Hacker News is my favorite source of tech news",
+              "Working on my cloud computing project",
+              "AWS Lambda vs EC2 - which one do you prefer?",
+              "Data engineering is fascinating",
+              "Just discovered a new Python library for data processing",
+              "Serverless is the future of cloud computing",
+              "My S3 bucket is filling up with data!",
+              "CloudFormation makes infrastructure so much easier"
+          ]
+
+          def lambda_handler(event, context):
+              yesterday = datetime.utcnow() - timedelta(days=1)
+              num_tweets = random.randint(5, 15)
+              tweets = []
+              
+              for i in range(num_tweets):
+                  user_data = random.choice(USERS)
+                  tweet = {
+                      "id": f"{int(yesterday.timestamp())}_{i}",
+                      "text": random.choice(TEXTS),
+                      "user": user_data["user"],
+                      "followers_count": user_data["followers"],
+                      "verified": user_data["verified"],
+                      "created_at": yesterday.strftime("%Y-%m-%dT%H:%M:%SZ")
+                  }
+                  tweets.append(tweet)
+              
+              s3_key = f"bronze/twitter/year={yesterday.year}/month={yesterday.month:02d}/day={yesterday.day:02d}/tweets_{yesterday.strftime('%Y%m%d')}.json"
+              
+              s3.put_object(
+                  Bucket=BUCKET,
+                  Key=s3_key,
+                  Body=json.dumps(tweets, indent=2),
+                  ContentType='application/json'
+              )
+              
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps({
+                      'count': num_tweets,
+                      'date': yesterday.strftime('%Y-%m-%d'),
+                      'location': s3_key
+                  })
+              }
+
+  TwitterDailyTrigger:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: "cron(0 3 * * ? *)"
+      Targets:
+        - Arn: !GetAtt TwitterGenerator.Arn
+          Id: TwitterTarget
+
+  TwitterLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref TwitterGenerator
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt TwitterDailyTrigger.Arn
