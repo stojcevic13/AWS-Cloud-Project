@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Gold layer - metrics and KPI'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Ime bucket-a
+    Default: hn-bronze-300617413048-12345678
+
+Resources:
+  GoldLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub "arn:aws:s3:::${BucketName}"
+                  - !Sub "arn:aws:s3:::${BucketName}/*"
+
+  GoldMetrics:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: gold-metrics
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      Role: !GetAtt GoldLambdaRole.Arn
+      Timeout: 600
+      MemorySize: 512
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref BucketName
+      Layers:
+        - arn:aws:lambda:eu-central-1:336392948345:layer:AWSSDKPandas-Python312:1
+      Code:
+        ZipFile: |
+          import awswrangler as wr
+          import json
+          import boto3
+          import pandas as pd
+          from datetime import datetime, timedelta
+          import os
+          
+          s3 = boto3.client('s3')
+          BUCKET = os.environ.get('BUCKET_NAME', 'hn-bronze-300617413048-12345678')
+          
+          yesterday = datetime.utcnow() - timedelta(days=1)
+          year = yesterday.strftime('%Y')
+          month = yesterday.strftime('%m')
+          day = yesterday.strftime('%d')
+          fmt = '%Y-%m-%d'
+          bucketname = "s3://hn-bronze-300617413048-12345678/"
+          
+          
+          def get_hn_daily_posts(df_posts):
+              df_hn = df_posts[df_posts['platform'] == 'Hacker News']        # 2. Filtriraj samo Hacker News podatke
+              type_counts = df_hn.groupby('type').size().to_dict()        # 3. Grupisi po tipu objave
+          
+              result = {
+                  'date': yesterday.strftime(fmt),
+                  'platform': 'Hacker News',
+                  'story': type_counts.get('story', 0),
+                  'ask_hn': type_counts.get('ask_hn', 0),
+                  'comment': type_counts.get('comment', 0),
+                  'job': type_counts.get('job', 0),
+                  'poll': type_counts.get('poll', 0),
+                  'total': len(df_hn)
+              }
+              return result
+          
+          
+          def get_top_10_x_users(df_x_users):
+              df_x_sorted = df_x_users.sort_values(by='followers', ascending=False)
+              top_10_x_users = df_x_sorted.head(10)[['user_id', 'username', 'followers', 'is_verified']].to_dict('records')
+              return top_10_x_users
+          
+          
+          def get_top_bottom_karma_score_users(df_hn_users):
+              df_hn_sorted = df_hn_users.sort_values(by='karma_score', ascending=False)
+              top_10 = df_hn_sorted.head(10).to_dict('records')
+              bottom_10 = df_hn_sorted.tail(10).to_dict('records')
+          
+              return top_10, bottom_10
+          
+          
+          def get_best_hn_job_story(df_posts):
+              df_hn = df_posts[df_posts['platform'] == 'Hacker News']
+          
+              df_hn_stories = df_hn[df_hn['type'] == 'story'].copy()
+              top_10_stories = df_hn_stories.nlargest(10, 'points')[['post_id', 'author', 'points']].to_dict('records')
+          
+              df_hn_jobs = df_hn[df_hn['type'] == 'job'].copy()
+              top_10_jobs = df_hn_jobs.nlargest(10, 'points')[['post_id', 'author', 'points']].to_dict('records')
+          
+              return top_10_jobs, top_10_stories
+          
+          
+          def post_metrics(df_x_yesterday_users, df_hn_yesterday_users):
+              s3_posts_key = f"silver/posts/year={year}/month={month}/day={day}"
+              # 1. Procitaj silver podatke za jucerasnji dan
+              df_posts = wr.s3.read_parquet("s3://hn-bronze-300617413048-12345678/" + s3_posts_key, dataset=True)
+              result1 = get_hn_daily_posts(df_posts)
+              result2 = len(df_hn_yesterday_users)
+              result3 = len(df_x_yesterday_users)
+              result4 = get_top_10_x_users(df_x_yesterday_users)
+              result5, result6 = get_top_bottom_karma_score_users(df_hn_yesterday_users)
+              result7, result8 = get_best_hn_job_story(df_posts)
+          
+              print(f"Rezultat: {result1}")
+              print(f"Broj hn korisnika za juce: {result2}")
+              print(f"Broj X korisnika za juce: {result3}")
+              print(f"Top 3 korisnika sa najvecim brojem pratilaca: {result4}")
+              print(f"Top 10 karma score: {result5}")
+              print(f"Bottom 10 karma score: {result6}")
+              print(f"Top 10 jobs: {result7}")
+              print(f"Top 10 stories: {result8}")
+          
+          
+          def get_master_usernames(hn_master_key, x_master_key):
+              try:
+                  hn_master_users = wr.s3.read_parquet(bucketname + hn_master_key, dataset=False)
+                  x_master_users = wr.s3.read_parquet(bucketname + x_master_key, dataset=False)
+                  master_hn_usernames = set(hn_master_users['user_id'].tolist())
+                  master_x_usernames = set(x_master_users['user_id'].tolist())
+          
+                  return master_hn_usernames, master_x_usernames
+              except:
+                  return set(), set()
+          
+          
+          def lambda_handler(event, context):
+              print("Pocinjem Gold layer - Hacker News metrike...")
+          
+              # PUTANJE U BUCKETU
+              s3_hn_yesterday_users_key = f"silver/users/platform=Hacker News/date={yesterday.strftime(fmt)}"
+              s3_hn_all_users_key = f"silver/users/platform=Hacker News"
+              s3_x_yesterday_users_key = f"silver/users/platform=X/date={yesterday.strftime(fmt)}"
+              s3_x_all_users_key = f"silver/users/platform=X"
+              hn_master_key = f"gold/master-users/Hacker News/hn_users.parquet"
+              x_master_key = f"gold/master-users/X/x_users.parquet"
+              s3_metric_key = f"gold/daily_users_metric"
+          
+              # MASTER USERNAME - SVI BEZ JUCERASNJEG DANA
+              master_hn_usernames, master_x_usernames = get_master_usernames(hn_master_key, x_master_key)
+          
+              df_hn_yesterday_users = wr.s3.read_parquet(bucketname + s3_hn_yesterday_users_key, dataset=True).drop_duplicates(subset=['user_id'])
+              df_hn_all_users = wr.s3.read_parquet(bucketname + s3_hn_all_users_key, dataset=True).drop_duplicates(subset='user_id')
+              df_x_yesterday_users = wr.s3.read_parquet(bucketname + s3_x_yesterday_users_key, dataset=True).drop_duplicates(subset=['user_id'])
+              df_x_all_users = wr.s3.read_parquet(bucketname + s3_x_all_users_key, dataset=True).drop_duplicates(subset=['user_id'])
+          
+              yesterday_hn_usernames = set(df_hn_yesterday_users['user_id'].unique())
+              yesterday_x_usernames = set(df_x_yesterday_users['user_id'].unique())
+          
+              new_hn_usernames = yesterday_hn_usernames - master_hn_usernames
+              new_x_usernames = yesterday_x_usernames - master_x_usernames
+          
+          
+              daily_users_metrics = [{
+                  'date': yesterday.strftime(fmt),
+                  'platform': 'Hacker News',
+                  'total_users': len(df_hn_all_users),
+                  'new_users': len(new_hn_usernames)
+              }, {
+                  'date': yesterday.strftime(fmt),
+                  'platform': 'X',
+                  'total_users': len(df_x_all_users),
+                  'new_users': len(new_x_usernames)
+              }]
+          
+              df_daily_users_metrics = pd.DataFrame(daily_users_metrics)
+              # df_daily_users_metrics.to_parquet('data_001.parquet', index=False)
+          
+          
+              wr.s3.to_parquet(
+                  df=df_hn_all_users,
+                  path=f"s3://{BUCKET}/{hn_master_key}",
+                  dataset=False
+              )
+              wr.s3.to_parquet(
+                  df=df_x_all_users,
+                  path=f"s3://{BUCKET}/{x_master_key}",
+                  dataset=False
+              )
+          
+              wr.s3.to_parquet(
+                  df=df_daily_users_metrics,
+                  path=f"s3://{BUCKET}/{s3_metric_key}",
+                  dataset=True,
+                  partition_cols=['platform', 'date']
+              )
+          
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps({
+                      'message': 'Gold metrika izracunata',
+                      'location': s3_metric_key
+                  })
+              }
+
+
+  GoldDailyTrigger:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: "cron(0 4 * * ? *)"
+      Targets:
+        - Arn: !GetAtt GoldMetrics.Arn
+          Id: GoldTarget
+
+  GoldLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref GoldMetrics
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt GoldDailyTrigger.Arn

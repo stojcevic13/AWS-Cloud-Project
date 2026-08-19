@@ -33,30 +33,6 @@ def fetch_items_by_tag(tag, start_ts, end_ts, max_hits=1000):
         return []
 
 
-def fetch_comments_for_day(start_ts, end_ts, max_hits=1000):
-    """Dohvata SVE komentare za određeni dan preko HN Search API"""
-    base_url = "https://hn.algolia.com/api/v1/search"
-
-    params = {
-        "tags": "comment",
-        "numericFilters": f"created_at_i>{start_ts},created_at_i<{end_ts}",
-        "hitsPerPage": max_hits
-    }
-
-    url = f"{base_url}?{urllib.parse.urlencode(params)}"
-    print("Tražim komentare...")
-
-    try:
-        with urllib.request.urlopen(url, timeout=60) as response:
-            data = json.loads(response.read())
-            hits = data.get('hits', [])
-            print(f"  Pronađeno {len(hits)} komentara")
-            return hits
-    except Exception as e:
-        print(f"Greška pri dohvatanju komentara: {e}")
-        return []
-
-
 def lambda_handler(event, context):
     print("Počinjem prikupljanje Hacker News podataka...")
 
@@ -69,16 +45,12 @@ def lambda_handler(event, context):
 
     # 1. Prikupi sve objave (story, ask, job, poll)
     all_posts = []
-    for tag in ["story", "ask_hn", "job", "poll"]:
+    for tag in ["story", "ask_hn", "comment", "job", "poll"]:
         posts = fetch_items_by_tag(tag, start_ts, end_ts)
         all_posts.extend(posts)
 
     print(f"Ukupno objava: {len(all_posts)}")
 
-    # 2. Prikupi SVE komentare za taj dan (JEDAN zahtev!)
-    all_comments = fetch_comments_for_day(start_ts, end_ts)
-
-    print(f"Ukupno komentara: {len(all_comments)}")
 
     # 3. Upisi u S3
     year = yesterday.strftime('%Y')
@@ -96,23 +68,12 @@ def lambda_handler(event, context):
     )
     print(f"✅ Upisane objave: {posts_key}")
 
-    # Komentari
-    if all_comments:
-        comments_key = f"bronze/hackernews/comments/year={year}/month={month}/day={day}/comments_{date_str}.json"
-        s3.put_object(
-            Bucket=BUCKET,
-            Key=comments_key,
-            Body=json.dumps(all_comments, indent=2),
-            ContentType='application/json'
-        )
-        print(f"✅ Upisani komentari: {comments_key}")
 
     return {
         'statusCode': 200,
         'body': json.dumps({
             'date': yesterday.strftime('%Y-%m-%d'),
-            'posts': len(all_posts),
-            'comments': len(all_comments)
+            'posts': len(all_posts)
         })
     }
 
