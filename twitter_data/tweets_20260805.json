@@ -1,0 +1,322 @@
+[
+  {
+    "objectID": "01785941021",
+    "author": "security_analyst",
+    "tweet_text": "Working on my cloud computing project",
+    "followers": 3100,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "11785941021",
+    "author": "python_lover",
+    "tweet_text": "Just deployed my first serverless app on AWS! #cloud",
+    "followers": 1200,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "21785941021",
+    "author": "software_engineer",
+    "tweet_text": "Data engineering is fascinating",
+    "followers": 1950,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "31785941021",
+    "author": "python_lover",
+    "tweet_text": "Serverless is the future of cloud computing",
+    "followers": 1200,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "41785941021",
+    "author": "dida90",
+    "tweet_text": "CloudFormation makes infrastructure so much easier",
+    "followers": 5802,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "51785941021",
+    "author": "haalandhaaland",
+    "tweet_text": "Just deployed my first serverless app on AWS! #cloud",
+    "followers": 9400,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "61785941021",
+    "author": "miloskrasic",
+    "tweet_text": "Just discovered a new Python library for data processing",
+    "followers": 100,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "71785941021",
+    "author": "dejanstankovic",
+    "tweet_text": "CloudFormation makes infrastructure so much easier",
+    "followers": 8900,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "81785941021",
+    "author": "software_engineer",
+    "tweet_text": "Working on my cloud computing project",
+    "followers": 1950,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "91785941021",
+    "author": "python_lover",
+    "tweet_text": "Hacker News is my favorite source of tech news",
+    "followers": 1200,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "101785941021",
+    "author": "aws_expert",
+    "tweet_text": "Just discovered a new Python library for data processing",
+    "followers": 4500,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "111785941021",
+    "author": "salekatai",
+    "tweet_text": "My S3 bucket is filling up with data!",
+    "followers": 9100,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "121785941021",
+    "author": "salekatai",
+    "tweet_text": "Just discovered a new Python library for data processing",
+    "followers": 9100,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "131785941021",
+    "author": "vladanmilojevic",
+    "tweet_text": "Learning about Medallion architecture today",
+    "followers": 5400,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "141785941021",
+    "author": "ceronaldo7",
+    "tweet_text": "Data engineering is fascinating",
+    "followers": 2190,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "151785941021",
+    "author": "haalandhaaland",
+    "tweet_text": "Data engineering is fascinating",
+    "followers": 9400,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "161785941021",
+    "author": "python_lover",
+    "tweet_text": "Working on my cloud computing project",
+    "followers": 1200,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "171785941021",
+    "author": "dejanstankovic",
+    "tweet_text": "Data engineering is fascinating",
+    "followers": 8900,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "181785941021",
+    "author": "haalandhaaland",
+    "tweet_text": "My S3 bucket is filling up with data!",
+    "followers": 9400,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "191785941021",
+    "author": "miloskrasic",
+    "tweet_text": "Serverless is the future of cloud computing",
+    "followers": 100,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "201785941021",
+    "author": "miloskrasic",
+    "tweet_text": "CloudFormation makes infrastructure so much easier",
+    "followers": 100,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "211785941021",
+    "author": "dida90",
+    "tweet_text": "Data engineering is fascinating",
+    "followers": 5802,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "221785941021",
+    "author": "software_engineer",
+    "tweet_text": "Just discovered a new Python library for data processing",
+    "followers": 1950,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "231785941021",
+    "author": "haalandhaaland",
+    "tweet_text": "Hacker News is my favorite source of tech news",
+    "followers": 9400,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "241785941021",
+    "author": "python_lover",
+    "tweet_text": "Working on my cloud computing project",
+    "followers": 1200,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "251785941021",
+    "author": "python_lover",
+    "tweet_text": "My S3 bucket is filling up with data!",
+    "followers": 1200,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "261785941021",
+    "author": "dida90",
+    "tweet_text": "Just deployed my first serverless app on AWS! #cloud",
+    "followers": 5802,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "271785941021",
+    "author": "data_scientist",
+    "tweet_text": "Serverless is the future of cloud computing",
+    "followers": 3400,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "281785941021",
+    "author": "salekatai",
+    "tweet_text": "CloudFormation makes infrastructure so much easier",
+    "followers": 9100,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "291785941021",
+    "author": "ceronaldo7",
+    "tweet_text": "Learning about Medallion architecture today",
+    "followers": 2190,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "301785941021",
+    "author": "data_scientist",
+    "tweet_text": "Learning about Medallion architecture today",
+    "followers": 3400,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "311785941021",
+    "author": "dev_journey",
+    "tweet_text": "Learning about Medallion architecture today",
+    "followers": 890,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "321785941021",
+    "author": "dida90",
+    "tweet_text": "My S3 bucket is filling up with data!",
+    "followers": 5802,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "331785941021",
+    "author": "salekatai",
+    "tweet_text": "My S3 bucket is filling up with data!",
+    "followers": 9100,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "341785941021",
+    "author": "dev_journey",
+    "tweet_text": "Learning about Medallion architecture today",
+    "followers": 890,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "351785941021",
+    "author": "software_engineer",
+    "tweet_text": "Working on my cloud computing project",
+    "followers": 1950,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "361785941021",
+    "author": "miloskrasic",
+    "tweet_text": "Serverless is the future of cloud computing",
+    "followers": 100,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "371785941021",
+    "author": "miloskrasic",
+    "tweet_text": "Learning about Medallion architecture today",
+    "followers": 100,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "381785941021",
+    "author": "dejanstankovic",
+    "tweet_text": "CloudFormation makes infrastructure so much easier",
+    "followers": 8900,
+    "verified": false,
+    "created_at": "2026-08-05T16:43:41Z"
+  },
+  {
+    "objectID": "391785941021",
+    "author": "security_analyst",
+    "tweet_text": "My S3 bucket is filling up with data!",
+    "followers": 3100,
+    "verified": true,
+    "created_at": "2026-08-05T16:43:41Z"
+  }
+]

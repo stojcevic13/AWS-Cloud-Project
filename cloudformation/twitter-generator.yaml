@@ -113,7 +113,7 @@ Resources:
   TwitterDailyTrigger:
     Type: AWS::Events::Rule
     Properties:
-      ScheduleExpression: "cron(0 3 * * ? *)"
+      ScheduleExpression: "cron(0 2 * * ? *)"
       Targets:
         - Arn: !GetAtt TwitterGenerator.Arn
           Id: TwitterTarget

@@ -1,0 +1,98 @@
+[
+  {
+    "objectID": "01785524850",
+    "author": "data_scientist",
+    "story_text": "Working on my cloud computing project",
+    "followers": 3400,
+    "verified": false,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "11785524850",
+    "author": "tech_blogger",
+    "story_text": "Just deployed my first serverless app on AWS! #cloud",
+    "followers": 2100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "21785524850",
+    "author": "tech_blogger",
+    "story_text": "Just deployed my first serverless app on AWS! #cloud",
+    "followers": 2100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "31785524850",
+    "author": "aws_expert",
+    "story_text": "Just deployed my first serverless app on AWS! #cloud",
+    "followers": 4500,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "41785524850",
+    "author": "crypto_trader",
+    "story_text": "Serverless is the future of cloud computing",
+    "followers": 5800,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "51785524850",
+    "author": "tech_blogger",
+    "story_text": "AWS Lambda vs EC2 - which one do you prefer?",
+    "followers": 2100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "61785524850",
+    "author": "tech_blogger",
+    "story_text": "Serverless is the future of cloud computing",
+    "followers": 2100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "71785524850",
+    "author": "security_analyst",
+    "story_text": "Learning about Medallion architecture today",
+    "followers": 3100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "81785524850",
+    "author": "tech_blogger",
+    "story_text": "CloudFormation makes infrastructure so much easier",
+    "followers": 2100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "91785524850",
+    "author": "tech_blogger",
+    "story_text": "Working on my cloud computing project",
+    "followers": 2100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "101785524850",
+    "author": "security_analyst",
+    "story_text": "Working on my cloud computing project",
+    "followers": 3100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  },
+  {
+    "objectID": "111785524850",
+    "author": "security_analyst",
+    "story_text": "Data engineering is fascinating",
+    "followers": 3100,
+    "verified": true,
+    "created_at": "2026-07-31T21:07:30Z"
+  }
+]

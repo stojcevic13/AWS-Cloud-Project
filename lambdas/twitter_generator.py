@@ -7,15 +7,23 @@ import os
 BUCKET_NAME = "hn-bronze-300617413048-12345678"
 
 # Lista mogućih korisnika
-USERS = [
-    {"user": "cloud_engineer", "followers": 1250, "verified": False},
-    {"user": "crypto_trader", "followers": 5800, "verified": True},
-    {"user": "data_scientist", "followers": 3400, "verified": False},
-    {"user": "tech_blogger", "followers": 2100, "verified": True},
-    {"user": "dev_journey", "followers": 890, "verified": False},
-    {"user": "aws_expert", "followers": 4500, "verified": True},
-    {"user": "python_lover", "followers": 1200, "verified": False},
-    {"user": "security_analyst", "followers": 3100, "verified": True}
+AUTHORS = [
+    {"author": "cloud_engineer", "followers": 1250, "verified": False},
+    {"author": "crypto_trader", "followers": 5800, "verified": True},
+    {"author": "data_scientist", "followers": 3400, "verified": False},
+    {"author": "tech_blogger", "followers": 2100, "verified": True},
+    {"author": "dev_journey", "followers": 890, "verified": False},
+    {"author": "aws_expert", "followers": 4500, "verified": True},
+    {"author": "python_lover", "followers": 1200, "verified": False},
+    {"author": "security_analyst", "followers": 3100, "verified": True},
+    {"author": "software_engineer", "followers": 1950, "verified": False},
+    {"author": "dida90", "followers": 5802, "verified": True},
+    {"author": "haalandhaaland", "followers": 9400, "verified": False},
+    {"author": "ceronaldo7", "followers": 2190, "verified": True},
+    {"author": "dejanstankovic", "followers": 8900, "verified": False},
+    {"author": "vladanmilojevic", "followers": 5400, "verified": True},
+    {"author": "miloskrasic", "followers": 100, "verified": False},
+    {"author": "salekatai", "followers": 9100, "verified": True}
 ]
 
 # Lista mogućih tekstova
@@ -36,16 +44,16 @@ TEXTS = [
 def generate_tweets():
     """Generiše lažne tweetove za jučerašnji dan"""
     yesterday = datetime.now() - timedelta(days=1)
-    num_tweets = random.randint(5, 15)
+    num_tweets = random.randint(40, 50)
     tweets = []
 
     for i in range(num_tweets):
-        user_data = random.choice(USERS)
+        user_data = random.choice(AUTHORS)
         tweet = {
-            "id": f"{int(yesterday.timestamp())}_{i}",
-            "text": random.choice(TEXTS),
-            "user": user_data["user"],
-            "followers_count": user_data["followers"],
+            "objectID": f"{i}{int(yesterday.timestamp())}",
+            "author": user_data["author"],
+            "tweet_text": random.choice(TEXTS),
+            "followers": user_data["followers"],
             "verified": user_data["verified"],
             "created_at": yesterday.strftime("%Y-%m-%dT%H:%M:%SZ")
         }
